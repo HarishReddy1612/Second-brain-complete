@@ -13,8 +13,15 @@ app.use(cors());
 
 app.post("/api/v1/signup", async (req, res) => {
     // TODO: zod validation , hash the password
-    const username = req.body.username;
-    const password = req.body.password;
+    const username = String(req.body.username ?? "").trim();
+    const password = String(req.body.password ?? "").trim();
+
+    if (!username || !password) {
+        res.status(400).json({
+            message: "Username and password are required"
+        });
+        return;
+    }
 
     try {
         await UserModel.create({
@@ -46,8 +53,15 @@ app.post("/api/v1/signup", async (req, res) => {
 })
 
 app.post("/api/v1/signin", async (req, res) => {
-    const username = req.body.username;
-    const password = req.body.password;
+    const username = String(req.body.username ?? "").trim();
+    const password = String(req.body.password ?? "").trim();
+
+    if (!username || !password) {
+        res.status(400).json({
+            message: "Username and password are required"
+        });
+        return;
+    }
 
     const existingUser = await UserModel.findOne({
         username,
