@@ -25,10 +25,23 @@ app.post("/api/v1/signup", async (req, res) => {
         res.json({
             message: "User signed up"
         })
-    } catch(e) {
-        res.status(411).json({
-            message: "User already exists"
-        })
+    } catch (e) {
+        const isDuplicateUser =
+            typeof e === "object" &&
+            e !== null &&
+            "code" in e &&
+            (e as { code?: number }).code === 11000;
+
+        if (isDuplicateUser) {
+            res.status(409).json({
+                message: "User already exists"
+            });
+            return;
+        }
+
+        res.status(500).json({
+            message: "Internal server error"
+        });
     }
 })
 
