@@ -11,12 +11,21 @@ export function Signup(){
    async function   signup(){
         const username=usernameRef.current?.value;
         const password=passwordRef.current?.value;
-        await axios.post(BACKEND_URL + "/api/v1/signup" , {
-            username,
-            password
-        })
-        navigate("/signin");
-        alert("you have signed up")
+        try {
+            await axios.post(BACKEND_URL + "/api/v1/signup" , {
+                username,
+                password
+            });
+            alert("you have signed up");
+            navigate("/signin");
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response?.status === 409) {
+                alert("User already exists. Redirecting to signin.");
+                navigate("/signin");
+                return;
+            }
+            alert("Signup failed. Please try again.");
+        }
         
 
     }
