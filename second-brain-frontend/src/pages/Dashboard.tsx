@@ -13,8 +13,13 @@ import { ShareBrainModal } from "../components/ShareBrainModal";
 export function Dashboard() {
   const [modalOpen, setModalOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
+  const [selectedFilter, setSelectedFilter] = useState<"all" | "twitter" | "youtube">("all");
 
   const { contents, refresh } = useContent();
+  const filteredContents =
+    selectedFilter === "all"
+      ? contents
+      : contents.filter((item) => item.type === selectedFilter);
 
   useEffect(() => {
     refresh();
@@ -34,7 +39,12 @@ export function Dashboard() {
 
   return (
     <div>
-      <Sidebar></Sidebar>
+      <Sidebar
+        selectedFilter={selectedFilter}
+        onSelectFilter={(filter) => {
+          setSelectedFilter((current) => (current === filter ? "all" : filter));
+        }}
+      ></Sidebar>
       <div className="p-6 ml-72 min-h-screen bg-slate-100">
         <CreateContentModal
           open={modalOpen}
@@ -78,7 +88,7 @@ export function Dashboard() {
         </div>
 
         <div className="mt-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-          {contents.map(({ _id, title, link, type }) => (
+          {filteredContents.map(({ _id, title, link, type }) => (
             <Card
               key={_id}
               id={_id}
@@ -90,9 +100,11 @@ export function Dashboard() {
           ))}
         </div>
 
-        {contents.length === 0 && (
+        {filteredContents.length === 0 && (
           <div className="mt-10 text-center text-slate-500">
-            No content yet. Add your first link.
+            {contents.length === 0
+              ? "No content yet. Add your first link."
+              : "No content found for this filter."}
           </div>
         )}
       </div>
