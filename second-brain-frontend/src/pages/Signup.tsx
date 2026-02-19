@@ -25,13 +25,27 @@ export function Signup(){
                 username,
                 password
             });
-            alert("you have signed up");
-            navigate("/signin");
+            const signinResponse = await axios.post(BACKEND_URL + "/api/v1/signin", {
+                username,
+                password
+            });
+            localStorage.setItem("token", signinResponse.data.token);
+            navigate("/dashboard");
         } catch (error) {
             if (axios.isAxiosError(error) && error.response?.status === 409) {
-                alert("User already exists. Redirecting to signin.");
-                goToSignin();
-                return;
+                try {
+                    const signinResponse = await axios.post(BACKEND_URL + "/api/v1/signin", {
+                        username,
+                        password
+                    });
+                    localStorage.setItem("token", signinResponse.data.token);
+                    navigate("/dashboard");
+                    return;
+                } catch {
+                    alert("User exists, but password is incorrect. Please sign in.");
+                    goToSignin();
+                    return;
+                }
             }
             alert("Signup failed. Please try again.");
         }
