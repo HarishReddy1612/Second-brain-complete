@@ -8,6 +8,15 @@ export function Signup(){
     const usernameRef=useRef<HTMLInputElement>(null);
     const passwordRef=useRef<HTMLInputElement>(null);
     const navigate=useNavigate();
+    function goToSignin() {
+        navigate("/signin", {
+            state: {
+                username: usernameRef.current?.value ?? "",
+                password: passwordRef.current?.value ?? ""
+            }
+        });
+    }
+
    async function   signup(){
         const username=usernameRef.current?.value;
         const password=passwordRef.current?.value;
@@ -21,7 +30,7 @@ export function Signup(){
         } catch (error) {
             if (axios.isAxiosError(error) && error.response?.status === 409) {
                 alert("User already exists. Redirecting to signin.");
-                navigate("/signin");
+                goToSignin();
                 return;
             }
             alert("Signup failed. Please try again.");
@@ -39,7 +48,7 @@ export function Signup(){
                 <Button onClick={signup} variant="primary" text="Signup" />
             </div>
             <div className="flex justify-center pt-2">
-                <Button onClick={() => navigate("/signin")} variant="secondary" text="Signin" />
+                <Button onClick={goToSignin} variant="secondary" text="Signin" />
             </div>
             
 
