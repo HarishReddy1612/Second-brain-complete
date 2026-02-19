@@ -42,8 +42,7 @@ export function Signup(){
                     navigate("/dashboard");
                     return;
                 } catch {
-                    alert("User exists, but password is incorrect. Please sign in.");
-                    goToSignin();
+                    alert("User exists, but password is incorrect.");
                     return;
                 }
             }
